@@ -4,6 +4,7 @@ package tn.star.Pfe.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import tn.star.Pfe.enums.StatutInscription;
 import tn.star.Pfe.enums.StatutOffre;
 import tn.star.Pfe.enums.TypeOffre;
 
@@ -24,16 +25,16 @@ public class Offre {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int Id;
+    private int id;
 
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private TypeOffre typeoffre;
+    private TypeOffre type;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private StatutOffre statut = StatutOffre.OVERTE;
+    private StatutOffre statut = StatutOffre.OUVERTE;
 
     private String titre;
 
@@ -57,5 +58,9 @@ public class Offre {
     @Builder.Default
     private List<Inscription> inscriptions = new ArrayList<>();
 
-
+    //methodes
+    public int getPlacesRestantes(){
+        long confirme = inscriptions.stream().filter(i->i.getStatut()== StatutInscription.CONFIRMEE).count();
+        return capaciteMax-(int)confirme;
+    }
 }

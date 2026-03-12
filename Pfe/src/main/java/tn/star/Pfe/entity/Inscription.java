@@ -8,7 +8,7 @@ import tn.star.Pfe.enums.StatutInscription;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "inscription" , uniqueConstraints = {@UniqueConstraint(ColumnNames={"adherent_id","offre_id"})})
+@Table(name = "inscription")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,11 +17,7 @@ import java.time.LocalDateTime;
 public class Inscription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int Id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="adherent_id")
-    private Adherent adherent;
+    private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="offre_id")
@@ -29,7 +25,7 @@ public class Inscription {
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private StatutInscription statutInscrip = StatutInscription.EN_ATTENTE;
+    private StatutInscription statut = StatutInscription.EN_ATTENTE;
 
     @CreationTimestamp
     private LocalDateTime dateInscription;
@@ -37,7 +33,8 @@ public class Inscription {
     @CreationTimestamp
     private LocalDateTime dateAnnulation;
 
-    private double Montant;
+    private double montant;
 
     private String commentaire;
+
 }
