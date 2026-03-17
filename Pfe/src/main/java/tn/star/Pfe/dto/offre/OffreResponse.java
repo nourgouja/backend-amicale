@@ -30,7 +30,7 @@
 //    private LocalDateTime createdAt;
 //    private LocalDateTime updatedAt;
 //}
-package tn.star.Pfe.dto;
+package tn.star.Pfe.dto.offre;
 
 import lombok.*;
 import tn.star.Pfe.enums.StatutOffre;

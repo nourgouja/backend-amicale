@@ -7,8 +7,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import tn.star.Pfe.dto.OffreRequest;
-import tn.star.Pfe.dto.OffreResponse;
+import tn.star.Pfe.dto.offre.OffreRequest;
+import tn.star.Pfe.dto.offre.OffreResponse;
 import tn.star.Pfe.enums.TypeOffre;
 import tn.star.Pfe.service.OffreService;
 

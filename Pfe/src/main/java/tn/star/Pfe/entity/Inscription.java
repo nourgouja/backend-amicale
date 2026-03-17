@@ -19,9 +19,18 @@ public class Inscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "adherent_id")
+    private int adherentId;
+
+    //mail d'inscription
+    @Column(name = "mail_adherent")
+    private String mailAdherent;
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="offre_id")
     private Offre offre;
+
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
@@ -30,11 +39,12 @@ public class Inscription {
     @CreationTimestamp
     private LocalDateTime dateInscription;
 
-    @CreationTimestamp
+
     private LocalDateTime dateAnnulation;
 
     private double montant;
 
     private String commentaire;
+
 
 }

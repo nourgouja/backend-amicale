@@ -61,7 +61,7 @@ public class Offre {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy= "offre" , cascade = CascadeType.ALL , orphanRemoval = true)
+    @OneToMany(mappedBy= "offre" , cascade = CascadeType.ALL , orphanRemoval = true,fetch = FetchType.EAGER)
     @Builder.Default
     private List<Inscription> inscriptions = new ArrayList<>();
 

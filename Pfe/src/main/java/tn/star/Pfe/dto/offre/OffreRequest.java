@@ -1,4 +1,4 @@
-package tn.star.Pfe.dto;
+package tn.star.Pfe.dto.offre;
 
 import lombok.Data;
 import tn.star.Pfe.enums.TypeOffre;

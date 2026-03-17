@@ -4,8 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import tn.star.Pfe.dto.OffreRequest;
-import tn.star.Pfe.dto.OffreResponse;
+import tn.star.Pfe.dto.offre.OffreRequest;
+import tn.star.Pfe.dto.offre.OffreResponse;
 import tn.star.Pfe.entity.Offre;
 import tn.star.Pfe.enums.StatutOffre;
 import tn.star.Pfe.enums.TypeOffre;
@@ -41,11 +41,7 @@ public class OffreService {
 
 
     @Transactional
-    public OffreResponse creer(String titre, String description,
-                               TypeOffre typeOffre, LocalDate dateDebut, LocalDate dateFin,
-                               int capaciteMax, double prixParPersonne,
-                               String lieu, MultipartFile image) throws IOException {
-
+    public OffreResponse creer(String titre, String description, TypeOffre typeOffre, LocalDate dateDebut, LocalDate dateFin, int capaciteMax, double prixParPersonne, String lieu, MultipartFile image) throws IOException {
         if (!dateFin.isAfter(dateDebut))
             throw new BadRequestException(
                     "La date de fin doit être après la date de début.");
