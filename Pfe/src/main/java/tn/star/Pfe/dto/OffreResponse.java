@@ -36,7 +36,6 @@ import lombok.*;
 import tn.star.Pfe.enums.StatutOffre;
 import tn.star.Pfe.enums.TypeOffre;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -54,7 +53,13 @@ public class OffreResponse {
     private int placeRestantes;
     private double prixParPersonne;
     private String lieu;
-    private String imageURL;
+
+    //private String imageURL;
+
+    private String imageBase64;
+    private String imageType;
+    private String imageNom;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -4,13 +4,13 @@ package tn.star.Pfe.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import tn.star.Pfe.enums.StatutInscription;
 import tn.star.Pfe.enums.StatutOffre;
 import tn.star.Pfe.enums.TypeOffre;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,11 +47,18 @@ public class Offre {
 
     private String lieu;
 
-    private String imageURL;
+    @Lob // a recherche lob
+    @Column(name = "image", columnDefinition = "LONGBLOB")
+    private byte[] image;
+
+    private String imageNom;
+    private String imageType;
+
 
     @CreationTimestamp
+    @Column(updatable = false)
     private LocalDateTime createdAt;
-    @CreationTimestamp
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy= "offre" , cascade = CascadeType.ALL , orphanRemoval = true)

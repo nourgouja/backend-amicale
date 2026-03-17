@@ -18,7 +18,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(h -> h.frameOptions(f -> f.disable()))
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()  // ← tout est accessible sans token
+                        .anyRequest().permitAll()
                 );
         return http.build();
     }

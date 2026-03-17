@@ -3,24 +3,32 @@ package tn.star.Pfe.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import tn.star.Pfe.dto.OffreRequest;
 import tn.star.Pfe.dto.OffreResponse;
+import tn.star.Pfe.enums.TypeOffre;
 import tn.star.Pfe.service.OffreService;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
+//@Controller
 @RestController
 @RequiredArgsConstructor
 public class OffreController {
 
     private final OffreService offreService;
 
+
     @GetMapping("/offres")
     public ResponseEntity<List<OffreResponse>> listerOuvertes() {
         return ResponseEntity.ok(offreService.listerOffresOuvertes());
     }
+
 
     @GetMapping("/offres/{id}")
     public ResponseEntity<OffreResponse> trouverParId(
@@ -34,11 +42,20 @@ public class OffreController {
         return ResponseEntity.ok(offreService.rechercherParTitre(titre));
     }
 
-    @PostMapping("/offres/creer")
+    @PostMapping(value = "/offres/creer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<OffreResponse> creer(
-            @Valid @RequestBody OffreRequest.CreateOffreRequest req) {
+            @RequestParam String titre,
+            @RequestParam String description,
+            @RequestParam TypeOffre typeOffre,
+            @RequestParam String dateDebut,
+            @RequestParam String dateFin,
+            @RequestParam int capaciteMax,
+            @RequestParam double prixParPersonne,
+            @RequestParam(required = false) String lieu,
+            @RequestParam(required = false) MultipartFile image) throws IOException {
+
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(offreService.creer(req));
+                .body(offreService.creer(titre, description, typeOffre, LocalDate.parse(dateDebut), LocalDate.parse(dateFin), capaciteMax, prixParPersonne, lieu, image));
     }
 
     @PutMapping("/offres/modifier/{id}")

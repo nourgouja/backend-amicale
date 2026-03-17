@@ -3,14 +3,19 @@ package tn.star.Pfe.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import tn.star.Pfe.dto.OffreRequest;
 import tn.star.Pfe.dto.OffreResponse;
 import tn.star.Pfe.entity.Offre;
 import tn.star.Pfe.enums.StatutOffre;
+import tn.star.Pfe.enums.TypeOffre;
 import tn.star.Pfe.exceptions.BadRequestException;
 import tn.star.Pfe.exceptions.NotFoundException;
 import tn.star.Pfe.repository.OffreRepository;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -34,30 +39,40 @@ public class OffreService {
                 .stream().map(this::toResponse).toList();
     }
 
+
     @Transactional
-    public OffreResponse creer(OffreRequest.CreateOffreRequest req) {
-        if (!req.getDateFin().isAfter(req.getDateDebut()))
-            throw new BadRequestException("La date de fin doit être après la date de début.");
+    public OffreResponse creer(String titre, String description,
+                               TypeOffre typeOffre, LocalDate dateDebut, LocalDate dateFin,
+                               int capaciteMax, double prixParPersonne,
+                               String lieu, MultipartFile image) throws IOException {
+
+        if (!dateFin.isAfter(dateDebut))
+            throw new BadRequestException(
+                    "La date de fin doit être après la date de début.");
 
         Offre offre = Offre.builder()
-                .titre(req.getTitre())
-                .description(req.getDescription())
-                .type(req.getTypeOffre())
+                .titre(titre)
+                .description(description)
+                .type(typeOffre)
                 .statut(StatutOffre.OUVERTE)
-                .dateDebut(req.getDateDebut())
-                .dateFin(req.getDateFin())
-                .capaciteMax(req.getCapaciteMax())
-                .prixParPersonne(req.getPrixParPersonne())
-                .lieu(req.getLieu())
-                .imageURL(req.getImageURL())
+                .dateDebut(dateDebut)
+                .dateFin(dateFin)
+                .capaciteMax(capaciteMax)
+                .prixParPersonne(prixParPersonne)
+                .lieu(lieu)
                 .build();
+
+        if (image != null && !image.isEmpty()) {
+            offre.setImage(image.getBytes());
+            offre.setImageNom(image.getOriginalFilename());
+            offre.setImageType(image.getContentType());
+        }
 
         return toResponse(offreRepository.save(offre));
     }
 
     @Transactional
-    public OffreResponse modifier(int id,
-                                  OffreRequest.UpdateOffreRequest req) {
+    public OffreResponse modifier(int id, OffreRequest.UpdateOffreRequest req) {
         Offre offre = offreRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Offre introuvable : " + id));
 
@@ -98,7 +113,13 @@ public class OffreService {
         offreRepository.deleteById(id);
     }
 
+
     public OffreResponse toResponse(Offre o) {
+        String imageBase64 = null;
+        if (o.getImage() != null) {
+            imageBase64 = Base64.getEncoder().encodeToString(o.getImage());
+        }
+
         return OffreResponse.builder()
                 .id(o.getId())
                 .titre(o.getTitre())
@@ -111,7 +132,9 @@ public class OffreService {
                 .placeRestantes(o.getPlacesRestantes())
                 .prixParPersonne(o.getPrixParPersonne())
                 .lieu(o.getLieu())
-                .imageURL(o.getImageURL())
+                .imageBase64(imageBase64)
+                .imageType(o.getImageType())
+                .imageNom(o.getImageNom())
                 .createdAt(o.getCreatedAt())
                 .updatedAt(o.getUpdatedAt())
                 .build();
