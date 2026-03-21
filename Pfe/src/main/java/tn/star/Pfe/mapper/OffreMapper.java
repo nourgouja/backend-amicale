@@ -1,31 +1,22 @@
 package tn.star.Pfe.mapper;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.*;
 import tn.star.Pfe.dto.offre.OffreResponse;
 import tn.star.Pfe.entity.Offre;
 
+import java.util.Base64;
 
-@Component
-public class OffreMapper {
+@Mapper(componentModel = "spring")
+public interface OffreMapper {
 
-    public OffreResponse toResponse(Offre o) {
-        return OffreResponse.builder()
-                .id(o.getId())
-                .titre(o.getTitre())
-                .description(o.getDescription())
-                .typeOffre(o.getType())
-                .statutOffre(o.getStatut())
-                .dateDebut(o.getDateDebut())
-                .dateFin(o.getDateFin())
-                .capaciteMax(o.getCapaciteMax())
-                .placeRestantes(o.getPlacesRestantes())
-                .prixParPersonne(o.getPrixParPersonne())
-                .lieu(o.getLieu())
+    @Mapping(source = "type", target = "typeOffre")
+    @Mapping(source = "statut", target = "statutOffre")
+    @Mapping(target = "imageBase64", expression = "java(encodeImage(offre))")
+    @Mapping(target = "placeRestantes", expression = "java(offre.getPlacesRestantes())")
+    OffreResponse toResponse(Offre offre);
 
-                .imageType(o.getImageType())
-                .imageNom(o.getImageNom())
-                .createdAt(o.getCreatedAt())
-                .updatedAt(o.getUpdatedAt())
-                .build();
+    default String encodeImage(Offre offre) {
+        return offre.getImage() != null ?
+                Base64.getEncoder().encodeToString(offre.getImage()) : null;
     }
 }

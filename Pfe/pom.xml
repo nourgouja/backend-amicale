@@ -20,6 +20,8 @@
 
 	<properties>
 		<java.version>17</java.version>
+		<mapstruct.version>1.5.5.Final</mapstruct.version>  <!-- ← ajouté -->
+		<lombok.version>1.18.32</lombok.version>             <!-- ← ajouté -->
 	</properties>
 
 	<dependencies>
@@ -73,27 +75,36 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- H2 (base de données en mémoire pour dev) -->
+		<!-- H2 -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- MySQL -->
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- Lombok (@Getter @Setter @Builder...) -->
+		<!-- Lombok -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
 			<optional>true</optional>
 		</dependency>
 
-		<!-- DevTools (redémarrage automatique) -->
+		<!-- MapStruct ← ajouté -->
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${mapstruct.version}</version>
+		</dependency>
+
+		<!-- DevTools -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -129,6 +140,28 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
+			<!-- MapStruct + Lombok annotation processor ← ajouté -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+						<!-- Lombok DOIT être AVANT MapStruct -->
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${mapstruct.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 

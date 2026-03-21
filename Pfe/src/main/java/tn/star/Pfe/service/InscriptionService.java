@@ -56,7 +56,7 @@ public class InscriptionService {
                 .build();
 
         inscription = inscriptionRepository.save(inscription);
-        return inscriptionMapper.toResponse(inscription, null);
+        return inscriptionMapper.toResponse(inscription);
     }
 
     @Transactional
@@ -68,7 +68,7 @@ public class InscriptionService {
         inscription.setStatut(StatutInscription.ANNULEE);
         inscription.setDateAnnulation(LocalDateTime.now());
 
-        return inscriptionMapper.toResponse(inscriptionRepository.save(inscription), null);
+        return inscriptionMapper.toResponse(inscriptionRepository.save(inscription));
     }
 
     @Transactional
@@ -78,13 +78,13 @@ public class InscriptionService {
 
         inscription.setStatut(StatutInscription.CONFIRMEE);
 
-        return inscriptionMapper.toResponse(inscriptionRepository.save(inscription), null);
+        return inscriptionMapper.toResponse(inscriptionRepository.save(inscription));
     }
 
     public List<InscriptionResponse> mesInscriptions(int adherentId) {
         return inscriptionRepository.findByAdherentId(adherentId)
                 .stream()
-                .map(i -> inscriptionMapper.toResponse(i, null))
+                .map(i -> inscriptionMapper.toResponse(i))
                 .toList();
     }
 
@@ -94,7 +94,7 @@ public class InscriptionService {
 
         return inscriptionRepository.findByOffre(offre)
                 .stream()
-                .map(i -> inscriptionMapper.toResponse(i, null))
+                .map(i -> inscriptionMapper.toResponse(i))
                 .toList();
     }
 }
