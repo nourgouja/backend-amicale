@@ -1,0 +1,24 @@
+package tn.star.Pfe.security;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import tn.star.Pfe.entity.User;
+import tn.star.Pfe.repository.UserRepository;
+
+
+@Service
+@RequiredArgsConstructor
+public class CustomUserDetailsService implements UserDetailsService {
+
+    private final UserRepository userRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Object u = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Email non trouvé : " + email));
+        return UserPrincipal.from((User) u);
+    }
+}

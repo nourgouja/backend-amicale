@@ -18,19 +18,13 @@ public class Inscription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @Column(name = "adherent_id")
-    private int adherentId;
-
-    //mail d'inscription
-    @Column(name = "mail_adherent")
-    private String mailAdherent;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "adherent_id")
+    private Adherent adherent;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="offre_id")
     private Offre offre;
-
 
     @Enumerated(EnumType.STRING)
     @Builder.Default

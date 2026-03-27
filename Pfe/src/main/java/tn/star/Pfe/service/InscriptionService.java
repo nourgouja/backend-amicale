@@ -5,14 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.star.Pfe.dto.inscription.InscriptionRequest;
 import tn.star.Pfe.dto.inscription.InscriptionResponse;
+import tn.star.Pfe.entity.Adherent;
 import tn.star.Pfe.entity.Inscription;
 import tn.star.Pfe.entity.Offre;
 import tn.star.Pfe.enums.StatutInscription;
 import tn.star.Pfe.enums.StatutOffre;
-import tn.star.Pfe.exceptions.CapaciteMaxAtteint;
-import tn.star.Pfe.exceptions.InscriptionExistants;
-import tn.star.Pfe.exceptions.NotFoundException;
-import tn.star.Pfe.exceptions.OffreFermee;
+import tn.star.Pfe.exceptions.*;
 import tn.star.Pfe.mapper.InscriptionMapper;
 import tn.star.Pfe.repository.InscriptionRepository;
 import tn.star.Pfe.repository.OffreRepository;
@@ -29,40 +27,36 @@ public class InscriptionService {
     private final OffreRepository offreRepository;
     private final InscriptionMapper inscriptionMapper;
 
-    @Transactional
-    public InscriptionResponse inscrire(int adherentId, InscriptionRequest req) throws Exception {
-        Offre offre = offreRepository.findById(req.getOffreId())
-                .orElseThrow(() -> new NotFoundException("Offre introuvable : " + req.getOffreId()));
+    public InscriptionResponse inscrire(int offreId, Adherent adherent) {
+
+        if (!adherent.isActif())
+            throw new EligibiliteException("Votre compte est désactivé");
+
+        Offre offre = offreRepository.findById(offreId)
+                .orElseThrow(() -> new NotFoundException("Offre non trouvée"));
 
         if (offre.getStatut() != StatutOffre.OUVERTE)
-            throw new OffreFermee();
-
+            throw new OffreFermee("L'offre n'est pas ouverte");
         if (offre.getDateFin().isBefore(LocalDate.now()))
-            throw new OffreFermee();
+            throw new BadRequestException("L'offre est expirée");
+        if (inscriptionRepository.existsByOffreAndAdherent(offre, adherent))
+            throw new InscriptionExistants("Déjà inscrit à cette offre");
+        if (offre.getPlacesRestantes() <= 0)
+            throw new CapaciteMaxAtteint("Plus de places disponibles");
 
-        if (inscriptionRepository.existsByOffreAndAdherentId(offre, adherentId))
-            throw new InscriptionExistants();
-
-        int confirmes = inscriptionRepository.countByOffreAndStatut(offre, StatutInscription.CONFIRMEE);
-        if (confirmes >= offre.getCapaciteMax())
-            throw new CapaciteMaxAtteint();
-
-        Inscription inscription = Inscription.builder()
-                .offre(offre)
-                .adherentId(adherentId)
-                .mailAdherent(req.getMaillAdherent())
-                .statut(StatutInscription.EN_ATTENTE)
+        Inscription ins = Inscription.builder()
+                .offre(offre).adherent(adherent)
                 .montant(offre.getPrixParPersonne())
                 .build();
-
-        inscription = inscriptionRepository.save(inscription);
-        return inscriptionMapper.toResponse(inscription, null);
+        return inscriptionMapper.toResponse(
+                inscriptionRepository.save(ins), null);
     }
 
+
     @Transactional
-    public InscriptionResponse annuler(int adherentId, int inscriptionId) {
+    public InscriptionResponse annuler(Adherent adherent, int inscriptionId) {
         Inscription inscription = inscriptionRepository
-                .findByIdAndAdherentId(inscriptionId, adherentId)
+                .findByIdAndAdherent(inscriptionId, adherent)
                 .orElseThrow(() -> new NotFoundException("Inscription introuvable"));
 
         inscription.setStatut(StatutInscription.ANNULEE);
@@ -81,8 +75,8 @@ public class InscriptionService {
         return inscriptionMapper.toResponse(inscriptionRepository.save(inscription), null);
     }
 
-    public List<InscriptionResponse> mesInscriptions(int adherentId) {
-        return inscriptionRepository.findByAdherentId(adherentId)
+    public List<InscriptionResponse> mesInscriptions( Adherent adherent) {
+        return inscriptionRepository.findByAdherent(adherent)
                 .stream()
                 .map(i -> inscriptionMapper.toResponse(i, null))
                 .toList();

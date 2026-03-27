@@ -13,8 +13,6 @@ public class InscriptionMapper {
                 .id(i.getId())
                 .offreId(i.getOffre().getId())
                 .offreTitre(i.getOffre().getTitre())
-                .adherentId(i.getAdherentId())
-                .mailAdherent(i.getMailAdherent())
                 .statut(i.getStatut())
                 .montant(i.getMontant())
                 .dateInscription(i.getDateInscription())

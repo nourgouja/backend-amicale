@@ -1,0 +1,24 @@
+package tn.star.Pfe.entity;
+
+
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+
+@Entity
+@Table(name="MembreBureau")
+@DiscriminatorValue("MembreBureau")
+@Getter
+@Setter
+@NoArgsConstructor
+@SuperBuilder
+public class MembreBureau extends User{
+
+    private String poste;
+
+}
