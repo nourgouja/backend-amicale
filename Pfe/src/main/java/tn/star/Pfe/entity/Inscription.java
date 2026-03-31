@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import tn.star.Pfe.enums.StatutInscription;
+import tn.star.Pfe.enums.StatutPaiement;
 
 import java.time.LocalDateTime;
 
@@ -22,6 +23,10 @@ public class Inscription {
     @JoinColumn(name = "adherent_id")
     private Adherent adherent;
 
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private StatutPaiement statutPaiement = StatutPaiement.EN_ATTENTE;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="offre_id")
     private Offre offre;
@@ -39,6 +44,8 @@ public class Inscription {
     private double montant;
 
     private String commentaire;
+
+
 
 
 }

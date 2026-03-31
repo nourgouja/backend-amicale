@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import tn.star.Pfe.enums.StatutInscription;
+import tn.star.Pfe.enums.StatutPaiement;
 
 import java.time.LocalDateTime;
 
@@ -20,6 +21,7 @@ public class InscriptionResponse {
     private int adherentId;
     private String mailAdherent;
     private StatutInscription statut;
+    private StatutPaiement statutPaiement;
     private double montant;
     private LocalDateTime dateInscription;
     private LocalDateTime dateAnnulation;

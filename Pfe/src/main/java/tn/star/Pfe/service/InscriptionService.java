@@ -3,13 +3,13 @@ package tn.star.Pfe.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tn.star.Pfe.dto.inscription.InscriptionRequest;
 import tn.star.Pfe.dto.inscription.InscriptionResponse;
 import tn.star.Pfe.entity.Adherent;
 import tn.star.Pfe.entity.Inscription;
 import tn.star.Pfe.entity.Offre;
 import tn.star.Pfe.enums.StatutInscription;
 import tn.star.Pfe.enums.StatutOffre;
+import tn.star.Pfe.enums.StatutPaiement;
 import tn.star.Pfe.exceptions.*;
 import tn.star.Pfe.mapper.InscriptionMapper;
 import tn.star.Pfe.repository.InscriptionRepository;
@@ -26,6 +26,7 @@ public class InscriptionService {
     private final InscriptionRepository inscriptionRepository;
     private final OffreRepository offreRepository;
     private final InscriptionMapper inscriptionMapper;
+    private StatutPaiement statut;
 
     public InscriptionResponse inscrire(int offreId, Adherent adherent) {
 
@@ -90,5 +91,13 @@ public class InscriptionService {
                 .stream()
                 .map(i -> inscriptionMapper.toResponse(i, null))
                 .toList();
+    }
+
+    @Transactional
+    public Object mettreAjourPaiement(int inscriptionId) {
+        Inscription inscription = inscriptionRepository.findById(inscriptionId).orElseThrow(()-> new NotFoundException("inscription non trouve"));
+        inscription.setStatutPaiement(statut);
+        return inscriptionMapper.toResponse(inscriptionRepository.save(inscription), null);
+
     }
 }

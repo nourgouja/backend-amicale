@@ -15,6 +15,7 @@ public class InscriptionMapper {
                 .offreTitre(i.getOffre().getTitre())
                 .statut(i.getStatut())
                 .montant(i.getMontant())
+                .statutPaiement(i.getStatutPaiement())
                 .dateInscription(i.getDateInscription())
                 .dateAnnulation(i.getDateAnnulation())
                 .commentaire(i.getCommentaire())

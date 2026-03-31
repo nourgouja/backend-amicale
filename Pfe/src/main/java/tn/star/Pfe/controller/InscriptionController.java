@@ -7,7 +7,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import tn.star.Pfe.dto.inscription.InscriptionResponse;
 import tn.star.Pfe.entity.Adherent;
-import tn.star.Pfe.entity.User;
 import tn.star.Pfe.exceptions.EligibiliteException;
 import tn.star.Pfe.exceptions.NotFoundException;
 import tn.star.Pfe.repository.UserRepository;
@@ -78,5 +77,10 @@ public class InscriptionController {
     @GetMapping("/offre/{offreId}")
     public ResponseEntity<List<InscriptionResponse>> inscritsParOffre(@PathVariable int offreId) {
         return ResponseEntity.ok(inscriptionService.inscritsParOffre(offreId));
+    }
+
+    @PutMapping("/{id}/paiement")
+    public ResponseEntity<InscriptionService> mettreAjourPaiement(@PathVariable int inscriptionId ){
+        return ResponseEntity.ok((InscriptionService) inscriptionService.mettreAjourPaiement(inscriptionId));
     }
 }
