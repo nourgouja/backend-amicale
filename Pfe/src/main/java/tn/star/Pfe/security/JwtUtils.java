@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class JwtUtils {
@@ -26,15 +27,19 @@ public class JwtUtils {
                 .setSubject(user.getUsername())
                 .claim("role", user.getAuthorities().iterator().next().getAuthority())
                 .claim("userId", user.getId())
+                .setId(java.util.UUID.randomUUID().toString())
+
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String generateRefreshToken(String email) {
+    public String generateRefreshToken(String user ) {
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(user.intern())
+                .claim("userId", user)
+                .setId(UUID.randomUUID().toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -45,13 +50,29 @@ public class JwtUtils {
         return parseClaims(token).getSubject();
     }
 
+    public String extractJti(String token) {
+        return parseClaims(token).getId();
+    }
+
+    public Date extractExpiration(String token) {
+        return parseClaims(token).getExpiration();
+    }
+
     public boolean validateToken(String token) {
         try {
             parseClaims(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            System.err.println("JWT expired: " + e.getMessage());
+            return false;
         } catch (JwtException | IllegalArgumentException e) {
+            System.err.println("JWT invalid: " + e.getMessage());
             return false;
         }
+    }
+
+    public boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
     }
 
     private Claims parseClaims(String token) {

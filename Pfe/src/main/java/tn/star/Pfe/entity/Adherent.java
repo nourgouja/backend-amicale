@@ -11,18 +11,21 @@ import java.util.List;
 
 @Entity
 @Table(name = "adherent")
-@DiscriminatorValue("Adherent")
-@Getter
+@DiscriminatorValue("ADHERENT")
+@Getter @Setter
 @NoArgsConstructor
 @SuperBuilder
 public class Adherent extends User{
 
-    @OneToMany(mappedBy = "adherent", fetch= FetchType.LAZY)
+    @OneToMany(mappedBy = "adherent", fetch= FetchType.EAGER)
     @Builder.Default
     private List<Inscription> inscriptions=new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
     @Builder.Default
-    private StatutPaiement statutCotisation = StatutPaiement.EN_ATTENTE;
+    private boolean aDette = false;
+
+    @Builder.Default
+    private double soldeCongé = 0.0;
+
 
 }

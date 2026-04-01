@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tn.star.Pfe.dto.offre.OffreRequest;
@@ -18,30 +19,32 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/offres")
 public class OffreController {
 
     private final OffreService offreService;
 
 
-    @GetMapping("/offres")
+    @GetMapping
     public ResponseEntity<List<OffreResponse>> listerOuvertes() {
         return ResponseEntity.ok(offreService.listerOffresOuvertes());
     }
 
 
-    @GetMapping("/offres/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<OffreResponse> trouverParId(
             @PathVariable int id) {
         return ResponseEntity.ok(offreService.trouverParId(id));
     }
 
-    @GetMapping("/offres/search")
+    @GetMapping("/search")
     public ResponseEntity<List<OffreResponse>> rechercher(
             @RequestParam String titre) {
         return ResponseEntity.ok(offreService.rechercherParTitre(titre));
     }
 
-    @PostMapping(value = "/offres/creer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/creer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('MEMBRE_BUREAU','ADMIN')")
     public ResponseEntity<OffreResponse> creer(
             @RequestParam String titre,
             @RequestParam String description,
@@ -57,19 +60,22 @@ public class OffreController {
                 .body(offreService.creer(titre, description, typeOffre, LocalDate.parse(dateDebut), LocalDate.parse(dateFin), capaciteMax, prixParPersonne, lieu, image));
     }
 
-    @PutMapping("/offres/modifier/{id}")
+    @PutMapping("/modifier/{id}")
+    @PreAuthorize("hasAnyRole('MEMBRE_BUREAU','ADMIN'")
     public ResponseEntity<OffreResponse> modifier(
             @PathVariable int id,
             @Valid @RequestBody OffreRequest.UpdateOffreRequest req) {
         return ResponseEntity.ok(offreService.modifier(id, req));
     }
 
-    @PatchMapping("/offres/fermer/{id}")
+    @PatchMapping("/fermer/{id}")
+    @PreAuthorize("hasAnyRole('MEMBRE_BUREAU','ADMIN'")
     public ResponseEntity<OffreResponse> fermer(@PathVariable int id) {
         return ResponseEntity.ok(offreService.fermer(id));
     }
 
-    @DeleteMapping("/offres/supprimer/{id}")
+    @DeleteMapping("/supprimer/{id}")
+    @PreAuthorize("hasAnyRole('MEMBRE_BUREAU','ADMIN'")
     public ResponseEntity<Void> supprimer(@PathVariable int id) {
         offreService.supprimer(id);
         return ResponseEntity.noContent().build();

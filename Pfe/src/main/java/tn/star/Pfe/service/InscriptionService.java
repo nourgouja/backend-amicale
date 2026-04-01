@@ -14,6 +14,7 @@ import tn.star.Pfe.exceptions.*;
 import tn.star.Pfe.mapper.InscriptionMapper;
 import tn.star.Pfe.repository.InscriptionRepository;
 import tn.star.Pfe.repository.OffreRepository;
+import tn.star.Pfe.security.UserPrincipal;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,6 +28,12 @@ public class InscriptionService {
     private final OffreRepository offreRepository;
     private final InscriptionMapper inscriptionMapper;
     private StatutPaiement statut;
+
+    private boolean isBureauOrAdmin(UserPrincipal principal) {
+        return principal.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_MEMBRE_BUREAU")
+                        || a.getAuthority().equals("ROLE_ADMIN"));
+    }
 
     public InscriptionResponse inscrire(int offreId, Adherent adherent) {
 
@@ -50,7 +57,7 @@ public class InscriptionService {
                 .montant(offre.getPrixParPersonne())
                 .build();
         return inscriptionMapper.toResponse(
-                inscriptionRepository.save(ins), null);
+                inscriptionRepository.save(ins));
     }
 
 
@@ -63,7 +70,7 @@ public class InscriptionService {
         inscription.setStatut(StatutInscription.ANNULEE);
         inscription.setDateAnnulation(LocalDateTime.now());
 
-        return inscriptionMapper.toResponse(inscriptionRepository.save(inscription), null);
+        return inscriptionMapper.toResponse(inscriptionRepository.save(inscription));
     }
 
     @Transactional
@@ -73,13 +80,13 @@ public class InscriptionService {
 
         inscription.setStatut(StatutInscription.CONFIRMEE);
 
-        return inscriptionMapper.toResponse(inscriptionRepository.save(inscription), null);
+        return inscriptionMapper.toResponse(inscriptionRepository.save(inscription));
     }
 
     public List<InscriptionResponse> mesInscriptions( Adherent adherent) {
         return inscriptionRepository.findByAdherent(adherent)
                 .stream()
-                .map(i -> inscriptionMapper.toResponse(i, null))
+                .map(i -> inscriptionMapper.toResponse(i))
                 .toList();
     }
 
@@ -89,15 +96,27 @@ public class InscriptionService {
 
         return inscriptionRepository.findByOffre(offre)
                 .stream()
-                .map(i -> inscriptionMapper.toResponse(i, null))
+                .map(i -> inscriptionMapper.toResponse(i))
                 .toList();
     }
 
     @Transactional
-    public Object mettreAjourPaiement(int inscriptionId) {
-        Inscription inscription = inscriptionRepository.findById(inscriptionId).orElseThrow(()-> new NotFoundException("inscription non trouve"));
-        inscription.setStatutPaiement(statut);
-        return inscriptionMapper.toResponse(inscriptionRepository.save(inscription), null);
+    public InscriptionResponse mettreAjourPaiement(int inscriptionId, StatutPaiement statut) {
+        Inscription inscription = inscriptionRepository.findById(inscriptionId)
+                .orElseThrow(() -> new NotFoundException("Inscription non trouvée"));
 
+        inscription.setStatutPaiement(statut);
+        inscription.setDatePaiement(LocalDateTime.now());
+
+        return inscriptionMapper.toResponse(inscriptionRepository.save(inscription));
     }
+
+//    @Transactional
+//    public InscriptionResponse mettreAjourPaiement(int inscriptionId) {
+//        Inscription inscription = inscriptionRepository.findById(inscriptionId).orElseThrow(()-> new NotFoundException("inscription non trouve"));
+//        inscription.setStatutPaiement(statut);
+//        return inscriptionMapper.toResponse(inscriptionRepository.save(inscription), null);
+//
+//    }
+
 }

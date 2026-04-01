@@ -9,16 +9,19 @@ import tn.star.Pfe.entity.User;
 import java.util.Collection;
 import java.util.List;
 
+
 public class UserPrincipal implements UserDetails {
 
     private final int id;
+    private final String username;
     private final String email;
     private final String motDePasse;
-    private final String role;
+    private String role;
     private final boolean actif;
 
     public UserPrincipal(int id, String email, String motDePasse, String role, boolean actif) {
         this.id = id;
+        this.username = email;
         this.email = email;
         this.motDePasse = motDePasse;
         this.role = role;
@@ -26,8 +29,8 @@ public class UserPrincipal implements UserDetails {
     }
 
     public static UserPrincipal from(User u) {
-
-        String role = u.getClass().getAnnotation(DiscriminatorValue.class).value().toUpperCase();
+        DiscriminatorValue discVal = u.getClass().getAnnotation(DiscriminatorValue.class);
+        String role = discVal != null ? discVal.value().toUpperCase() : "ADHERENT";
 
         return new UserPrincipal(
                 u.getId(),
@@ -58,7 +61,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override

@@ -19,13 +19,15 @@ public class Inscription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "adherent_id")
     private Adherent adherent;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private StatutPaiement statutPaiement = StatutPaiement.EN_ATTENTE;
+
+    private LocalDateTime datePaiement;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="offre_id")

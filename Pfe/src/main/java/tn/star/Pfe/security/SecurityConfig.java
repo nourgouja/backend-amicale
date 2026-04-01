@@ -1,6 +1,7 @@
 package tn.star.Pfe.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,8 +22,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    @Autowired
     private final JwtAuthFilter jwtAuthFilter;
-    private final tn.star.Pfe.security.CustomUserDetailsService userDetailsService;
+
+    @Autowired
+    private final CustomUserDetailsService userDetailsService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -31,19 +35,36 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/login",
-                                "/auth/refresh",
+                                "/api/auth/login",
+                                "/api/auth/refresh",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/swagger-ui.html",
+                                "/2-console/**"
                         ).permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/offres/**")
-                        .hasAnyRole("ADHERENT", "MEMBRE_BUREAU", "ADMIN")
-                        .requestMatchers("/offres/**")
-                        .hasAnyRole("MEMBRE_BUREAU", "ADMIN")
-                        .requestMatchers("/inscriptions/**")
-                        .hasAnyRole("ADHERENT", "MEMBRE_BUREAU", "ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/api/offres/**").authenticated()
+
+                        //offres
+                        .requestMatchers(HttpMethod.POST, "/api/offres/**").hasAnyRole("MEMBRE_BUREAU", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/offres/**").hasAnyRole("MEMBRE_BUREAU", "ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/offres/**").hasAnyRole("MEMBRE_BUREAU", "ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/offres/**").hasAnyRole("MEMBRE_BUREAU", "ADMIN")
+
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
+                        //inscriptions adherent
+                        .requestMatchers(HttpMethod.POST, "/api/inscriptions/**").hasRole("ADHERENT")
+                        .requestMatchers(HttpMethod.PATCH, "/api/inscriptions/annuler/**").hasRole("ADHERENT")
+                        .requestMatchers(HttpMethod.GET, "/api/inscriptions/mesinscriptions").hasRole("ADHERENT")
+
+                        //inscriptions bureau admin
+                        .requestMatchers(HttpMethod.PATCH, "/api/inscriptions/confirmer/**").hasAnyRole("MEMBRE_BUREAU", "ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/inscriptions/offre/**").hasAnyRole("MEMBRE_BUREAU", "ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/inscriptions/{id}/paiement").hasAnyRole("MEMBRE_BUREAU", "ADMIN")
+
+                        .requestMatchers("/api/utilisateurs/profil").authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

@@ -17,7 +17,7 @@ import tn.star.Pfe.service.AuthService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminController {
 

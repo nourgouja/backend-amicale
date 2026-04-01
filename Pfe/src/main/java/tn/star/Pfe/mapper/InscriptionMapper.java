@@ -8,11 +8,13 @@ import tn.star.Pfe.entity.Inscription;
 @Component
 public class InscriptionMapper {
 
-    public InscriptionResponse toResponse(Inscription i, Object o) {
+    public InscriptionResponse toResponse(Inscription i) {
         return InscriptionResponse.builder()
                 .id(i.getId())
                 .offreId(i.getOffre().getId())
                 .offreTitre(i.getOffre().getTitre())
+                .adherentId(i.getAdherent().getId())
+                .mailAdherent(i.getAdherent().getEmail())
                 .statut(i.getStatut())
                 .montant(i.getMontant())
                 .statutPaiement(i.getStatutPaiement())

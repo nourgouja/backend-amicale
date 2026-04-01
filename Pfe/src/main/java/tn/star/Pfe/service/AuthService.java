@@ -1,9 +1,13 @@
 package tn.star.Pfe.service;
 
+import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import tn.star.Pfe.dto.auth.*;
@@ -14,6 +18,8 @@ import tn.star.Pfe.mapper.UserMapper;
 import tn.star.Pfe.repository.UserRepository;
 import tn.star.Pfe.security.JwtUtils;
 import tn.star.Pfe.security.UserPrincipal;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -38,8 +44,6 @@ public class AuthService {
         if (!jwtUtils.validateToken(refreshToken)) {
             throw new BadRequestException("Refresh token invalide ou expiré");
         }
-
-
         //walet object
         String email = jwtUtils.extractEmail(refreshToken);
         Object u = userRepository.findByEmail(email)
@@ -61,7 +65,7 @@ public class AuthService {
                     .motDePasse(hash)
                     .nom(req.nom())
                     .prenom(req.prenom())
-                    .actif(true)
+                    .actif(false)
                     .build();
 
             case MEMBRE_BUREAU -> MembreBureau.builder()
@@ -70,7 +74,7 @@ public class AuthService {
                     .nom(req.nom())
                     .prenom(req.prenom())
                     .poste(req.poste())
-                    .actif(true)
+                    .actif(false)
                     .build();
 
             case ADMIN -> Admin.builder()
@@ -78,7 +82,7 @@ public class AuthService {
                     .motDePasse(hash)
                     .nom(req.nom())
                     .prenom(req.prenom())
-                    .actif(true)
+                    .actif(false)
                     .build();
         };
 

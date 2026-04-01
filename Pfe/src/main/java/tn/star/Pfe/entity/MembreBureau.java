@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name="MembreBureau")
-@DiscriminatorValue("MembreBureau")
+@DiscriminatorValue("MEMBRE_BUREAU")
 @Getter
 @Setter
 @NoArgsConstructor
