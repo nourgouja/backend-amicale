@@ -27,25 +27,28 @@ public class Offre {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    private String titre;
     private String description;
+    private String lieu;
+
+    private LocalDate dateDebut;
+
+    // TO UPDATE
+    private LocalDate dateFin;
+
+    private double prixParPersonne;
+    private int capaciteMax;
+
+
 
     @Enumerated(EnumType.STRING)
     private TypeOffre type;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private StatutOffre statut = StatutOffre.OUVERTE;
+    private StatutOffre statut;
+    //@Builder.Default
+    //private StatutOffre statut = StatutOffre.OUVERTE;
 
-    private String titre;
-
-    private LocalDate dateDebut;
-    private LocalDate dateFin;
-
-    private int capaciteMax;
-
-    private double prixParPersonne;
-
-    private String lieu;
 
     @Lob // a recherche lob
     @Column(name = "image", columnDefinition = "LONGBLOB")
@@ -61,11 +64,21 @@ public class Offre {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    // par qui
+    @ManyToOne
+    @JoinColumn(name = "adherent_id")
+    private Adherent adherent;
+
+    private String societe;
+    private String agence;
+    private String destination;
+
+    //@JsonIgnore
     @OneToMany(mappedBy= "offre" , cascade = CascadeType.ALL , orphanRemoval = true,fetch = FetchType.EAGER)
     @Builder.Default
     private List<Inscription> inscriptions = new ArrayList<>();
 
-    //methodes
+
     public int getPlacesRestantes(){
         long confirme = inscriptions.stream().filter(i->i.getStatut()== StatutInscription.CONFIRMEE).count();
         return capaciteMax-(int)confirme;

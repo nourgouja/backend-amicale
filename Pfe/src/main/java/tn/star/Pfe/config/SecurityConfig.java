@@ -1,4 +1,4 @@
-package tn.star.Pfe.security;
+package tn.star.Pfe.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +16,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import tn.star.Pfe.security.CustomUserDetailsService;
+import tn.star.Pfe.security.JwtAuthFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -89,4 +91,6 @@ public class SecurityConfig {
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
+
+
 }

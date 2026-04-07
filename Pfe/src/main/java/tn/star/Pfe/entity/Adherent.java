@@ -4,8 +4,6 @@ package tn.star.Pfe.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import tn.star.Pfe.enums.StatutPaiement;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +19,8 @@ public class Adherent extends User{
     @Builder.Default
     private List<Inscription> inscriptions=new ArrayList<>();
 
+
+    // TO UPDATE THIS PART AFTER YAPPING
     @Builder.Default
     private boolean aDette = false;
 

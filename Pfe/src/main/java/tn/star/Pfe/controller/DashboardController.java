@@ -11,19 +11,19 @@ import tn.star.Pfe.dto.dashboard.BureauDashboardResponse;
 import tn.star.Pfe.service.DashboardService;
 
 @RestController
-@RequestMapping("/api/dashboard")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class DashboardController {
 
     private final DashboardService dashboardService;
 
-    @GetMapping
+    @GetMapping("/admin/dashboard")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AdminDashboardResponse> adminDashboard() {
         return ResponseEntity.ok(dashboardService.getAdminDashboard());
     }
 
-    @GetMapping
+    @GetMapping("/bureau/dashboard")
     @PreAuthorize("hasRole('MEMBRE_BUREAU')")
     public ResponseEntity<BureauDashboardResponse> bureauDashboard() {
         return ResponseEntity.ok(dashboardService.getBureauDashboard());

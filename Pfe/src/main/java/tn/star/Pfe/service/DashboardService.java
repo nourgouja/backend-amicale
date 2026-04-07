@@ -30,8 +30,10 @@ public class DashboardService {
 
         long adherents    = userRepository.findAll().stream()
                 .filter(u -> u.getClass().getSimpleName().equals("Adherent")).count();
+
         long membres      = userRepository.findAll().stream()
                 .filter(u -> u.getClass().getSimpleName().equals("MembreBureau")).count();
+
         long admins       = userRepository.findAll().stream()
                 .filter(u -> u.getClass().getSimpleName().equals("Admin")).count();
 

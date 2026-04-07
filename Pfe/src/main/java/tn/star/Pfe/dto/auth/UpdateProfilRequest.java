@@ -1,8 +1,11 @@
 package tn.star.Pfe.dto.auth;
 
 
+import jakarta.validation.constraints.Email;
+
 public record UpdateProfilRequest(
         String nom,
         String prenom,
-        String motDePasse
+        String motDePasse,
+        @Email String email
 ) {}

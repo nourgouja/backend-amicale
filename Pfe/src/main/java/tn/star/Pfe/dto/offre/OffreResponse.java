@@ -54,8 +54,6 @@ public class OffreResponse {
     private double prixParPersonne;
     private String lieu;
 
-    //private String imageURL;
-
     private String imageBase64;
     private String imageType;
     private String imageNom;

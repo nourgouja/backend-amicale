@@ -25,6 +25,8 @@ public abstract class User {
     private String email;
     private String nom;
     private String prenom;
+    private String cin;
+    private String telephone;
     private String motDePasse;
 
     @Enumerated(EnumType.STRING)

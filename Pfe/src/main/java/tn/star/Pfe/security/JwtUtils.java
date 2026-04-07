@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.UUID;
 
 @Component
 public class JwtUtils {
@@ -18,9 +17,6 @@ public class JwtUtils {
 
     @Value("${app.jwt.expiration-ms}")
     private long jwtExpirationMs;
-
-    @Value("${app.jwt.refresh-expiration-ms}")
-    private long refreshExpirationMs;
 
     public String generateAccessToken(UserPrincipal user) {
         return Jwts.builder()
@@ -35,23 +31,8 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String generateRefreshToken(String user ) {
-        return Jwts.builder()
-                .setSubject(user.intern())
-                .claim("userId", user)
-                .setId(UUID.randomUUID().toString())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationMs))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-                .compact();
-    }
-
     public String extractEmail(String token) {
         return parseClaims(token).getSubject();
-    }
-
-    public String extractJti(String token) {
-        return parseClaims(token).getId();
     }
 
     public Date extractExpiration(String token) {
@@ -69,10 +50,6 @@ public class JwtUtils {
             System.err.println("JWT invalid: " + e.getMessage());
             return false;
         }
-    }
-
-    public boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
     }
 
     private Claims parseClaims(String token) {
