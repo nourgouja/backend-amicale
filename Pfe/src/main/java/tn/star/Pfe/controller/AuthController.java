@@ -9,8 +9,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import tn.star.Pfe.dto.auth.AuthResponse;
 import tn.star.Pfe.dto.auth.LoginRequest;
+import tn.star.Pfe.dto.auth.UserProfile;
+import tn.star.Pfe.dto.auth.UserResponse;
+import tn.star.Pfe.entity.User;
+import tn.star.Pfe.mapper.UserMapper;
 import tn.star.Pfe.security.UserPrincipal;
 import tn.star.Pfe.service.AuthService;
+import tn.star.Pfe.service.UserService;
 
 @Slf4j
 @RestController
@@ -19,6 +24,8 @@ import tn.star.Pfe.service.AuthService;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserService userService;
+    private final UserMapper userMapper;
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
@@ -34,7 +41,9 @@ public class AuthController {
 
     @GetMapping("/currentUser")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<UserPrincipal> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal) {
-        return ResponseEntity.ok(principal);
+    public ResponseEntity<UserResponse> getCurrentUser(
+            @AuthenticationPrincipal UserPrincipal principal) {
+        User user = userService.findById(principal.getId());
+        return ResponseEntity.ok(userMapper.toResponse(user));
     }
 }

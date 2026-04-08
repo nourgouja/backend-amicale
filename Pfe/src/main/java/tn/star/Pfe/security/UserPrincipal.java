@@ -29,16 +29,9 @@ public class UserPrincipal implements UserDetails {
     }
 
     public static UserPrincipal from(User u) {
-        DiscriminatorValue discVal = u.getClass().getAnnotation(DiscriminatorValue.class);
-        String role = discVal != null ? discVal.value().toUpperCase() : "ADHERENT";
+        String role = u.getRole().name();
 
-        return new UserPrincipal(
-                u.getId(),
-                u.getEmail(),
-                u.getMotDePasse(),
-                role,
-                u.isActif()
-        );
+        return new UserPrincipal(u.getId(), u.getEmail(), u.getMotDePasse(), role, u.isActif());
     }
 
     public int getId() {

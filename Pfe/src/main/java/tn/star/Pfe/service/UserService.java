@@ -17,7 +17,10 @@ import tn.star.Pfe.exceptions.BadRequestException;
 import tn.star.Pfe.exceptions.NotFoundException;
 import tn.star.Pfe.mapper.UserMapper;
 import tn.star.Pfe.repository.UserRepository;
+
+import java.security.SecureRandom;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -52,7 +55,8 @@ public class UserService {
 
     @Transactional
     public Page<UserResponse> findAll(Role role, String search, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        int safeSize = Math.min(size, 100);
+        Pageable pageable = PageRequest.of(page, safeSize);
 
         Page<User> result;
         if (role != null && search != null && !search.isBlank()) {
@@ -175,6 +179,10 @@ public class UserService {
     }
 
     private String generateTemporaryPassword() {
-        return UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%";
+        SecureRandom random = new SecureRandom();
+        return random.ints(12, 0, chars.length())
+                .mapToObj(i -> String.valueOf(chars.charAt(i)))
+                .collect(Collectors.joining());
     }
 }

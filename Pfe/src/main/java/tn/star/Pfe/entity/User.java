@@ -22,12 +22,15 @@ public abstract class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Email(regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
+    private String motDePasse;
     private String nom;
     private String prenom;
     private String cin;
     private String telephone;
-    private String motDePasse;
 
     @Enumerated(EnumType.STRING)
     private Role role;

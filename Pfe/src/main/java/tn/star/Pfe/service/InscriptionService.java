@@ -35,10 +35,8 @@ public class InscriptionService {
                         || a.getAuthority().equals("ROLE_ADMIN"));
     }
 
+    @Transactional
     public InscriptionResponse inscrire(int offreId, Adherent adherent) {
-
-        if (!adherent.isActif())
-            throw new EligibiliteException("Votre compte est désactivé");
 
         Offre offre = offreRepository.findById(offreId)
                 .orElseThrow(() -> new NotFoundException("Offre non trouvée"));

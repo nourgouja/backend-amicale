@@ -109,8 +109,8 @@ public class UserController {
     //changer cette fonction temparary password then reinstalation par email
     @PostMapping("/{id}/reinitialiser-mot-de-passe")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> adminResetPassword(@PathVariable int id) {
-        String tempPassword = userService.adminResetPassword(id);
-        return ResponseEntity.ok("Mot de passe temporaire: " + tempPassword);
+    public ResponseEntity<Void> adminResetPassword(@PathVariable int id) {
+        userService.adminResetPassword(id);
+        return ResponseEntity.noContent().build();
     }
 }

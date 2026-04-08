@@ -41,8 +41,7 @@ public class SecurityConfig {
                                 "/api/auth/refresh",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/2-console/**"
+                                "/swagger-ui.html"
                         ).permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/offres/**").authenticated()
