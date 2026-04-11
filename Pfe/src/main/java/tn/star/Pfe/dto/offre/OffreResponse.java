@@ -63,8 +63,6 @@ public class OffreResponse {
 
     private Long poleId;
     private String poleNom;
-
-    private String logoUrl;
     private String avantages;
     private String societe;
 

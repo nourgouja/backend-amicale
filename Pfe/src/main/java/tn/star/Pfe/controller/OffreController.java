@@ -44,13 +44,20 @@ public class OffreController {
         return ResponseEntity.ok(offreService.rechercherParTitre(titre));
     }
 
-    @PostMapping(value = "/creer", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('MEMBRE_BUREAU') or hasRole('ADMIN')")
-    public ResponseEntity<OffreResponse> creer(
-            @RequestPart("offre") @Valid OffreRequest request,
-            @RequestPart(value = "image", required = false) MultipartFile image
-    ) throws IOException {
-        return ResponseEntity.status(201).body(offreService.creer(request, image));
+    @PostMapping(value = "/creer", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ADMIN') or " +
+            "(hasRole('MEMBRE_BUREAU') and " +
+            "@offreAuthService.canCreate(principal, #request.typeOffre.name()))")
+    public ResponseEntity<OffreResponse> creer(@Valid @RequestBody OffreRequest request) throws IOException {
+        return ResponseEntity.status(201).body(offreService.creer(request, null));
+    }
+    @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN') or " +
+            "(hasRole('MEMBRE_BUREAU') and @offreAuthService.canManage(principal, #id))")
+    public ResponseEntity<OffreResponse> uploadImage(
+            @PathVariable Long id,
+            @RequestPart("image") MultipartFile image) {
+        return ResponseEntity.ok(offreService.uploadImage(id, image));
     }
 
     @PutMapping("/modifier/{id}")

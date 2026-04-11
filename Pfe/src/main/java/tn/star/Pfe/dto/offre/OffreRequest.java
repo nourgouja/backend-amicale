@@ -54,7 +54,6 @@ public class OffreRequest {
         private String lieu;
         private Long agenceId;
         private ModePaiement modePaiement;
-        private String logoUrl;
         private String avantages;
     }
 }

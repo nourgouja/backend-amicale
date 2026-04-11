@@ -85,6 +85,20 @@ public class OffreService {
     }
 
     @Transactional
+    public OffreResponse uploadImage(Long id, MultipartFile image) {
+        Offre offre = offreRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Offre introuvable"));
+        try {
+            offre.setImage(image.getBytes());
+            offre.setImageNom(image.getOriginalFilename());
+            offre.setImageType(image.getContentType());
+        } catch (IOException e) {
+            throw new BadRequestException("Erreur lecture image.");
+        }
+        return offreMapper.toResponse(offreRepository.save(offre));
+    }
+
+    @Transactional
     public OffreResponse modifier(Long id, OffreRequest.UpdateOffreRequest req) {
         Offre offre = offreRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Offre introuvable : " + id));
@@ -149,9 +163,6 @@ public class OffreService {
             case CONVENTION -> {
                 if (offre.getPrixParPersonne() != null && offre.getPrixParPersonne().compareTo(BigDecimal.ZERO) != 0) {
                     throw new BadRequestException("Convention n'a pas de prix.");
-                }
-                if (offre.getImage() == null) {
-                    throw new BadRequestException("Logo obligatoire pour une convention.");
                 }
             }
         }
